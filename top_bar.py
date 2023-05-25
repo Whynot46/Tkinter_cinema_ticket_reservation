@@ -48,7 +48,7 @@ class Account_tab(ttk.Frame):
 		self.user_icon.create_image(0, 0, anchor=NW, image=self.user_icon_img)
 
 		self.poster_label = Label(self, text=f'{User.login}', font=label_font, **base_padding)
-		self.poster_label.place(relx = 0.03, rely = 0.19)
+		self.poster_label.place(relx = 0.035, rely = 0.19)
 
 		self.change_password_btn = Button(self, text='Сменить пароль', command=self.change_password)
 		self.change_password_btn.place(relx = 0.02, rely = 0.23)

@@ -4,6 +4,7 @@ from tkinter import ttk
 from tkinter import messagebox
 from top_bar import *
 
+
 # кортежи и словари, содержащие настройки шрифтов и отступов
 font_header = ('Arial', 15)
 font_entry = ('Arial', 12)
@@ -125,7 +126,7 @@ class Registration_window():
         password = self.password_entry.get()
         repeat_password = self.repeat_password_entry.get()
 
-        if username=='' or password=='' or repeat_password=='':
+        if login=='' or password=='' or repeat_password=='':
             messagebox.showerror('Ошибка', 'Заполните все поля')
         elif password == repeat_password:
             messagebox.showinfo('Успешно', f'Логин: {username}\nПароль: {password}')
@@ -140,7 +141,7 @@ class Registration_window():
 class Main_window():
     def __init__(self):
         self.window = Tk()
-        self.window.title('Резервирование билетов в кинотеатр')
+        self.window.title('Резервирование билетов в кинотеатр "Художественный фильм"')
         #self.window.state('zoomed') #Под Windows, если не раскрывается в полный экран, заккоментируйте следующую строчку
         self.window.attributes('-zoomed', True)
 
