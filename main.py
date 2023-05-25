@@ -2,7 +2,6 @@
 from tkinter import *
 from tkinter import ttk
 from tkinter import messagebox
-
 from top_bar import *
 
 # кортежи и словари, содержащие настройки шрифтов и отступов
@@ -29,13 +28,13 @@ class Login_window:
         self.authorization_label.pack()
 
         # метка для поля ввода имени
-        self.username_label = Label(self.window, text='Логин', font=label_font, **base_padding)
-        self.username_label.pack()
+        self.login_label = Label(self.window, text='Логин', font=label_font, **base_padding)
+        self.login_label.pack()
 
         # поле ввода имени
-        self.username_entry = Entry(self.window, bg='#fff', fg='#444', font=font_entry)
-        self.username_entry.pack()
-        self.username_entry.focus()
+        self.login_entry = Entry(self.window, bg='#fff', fg='#444', font=font_entry)
+        self.login_entry.pack()
+        self.login_entry.focus()
 
         # метка для поля ввода пароля
         self.password_label = Label(self.window, text='Пароль', font=label_font, **base_padding)
@@ -58,8 +57,8 @@ class Login_window:
 
 
     def login(self):
-        username = self.username_entry.get()
-        password = self.password_entry.get()
+        User.login = self.login_entry.get()
+        User.password = self.password_entry.get()
         self.window.destroy()
         Main_window()
 
@@ -90,13 +89,13 @@ class Registration_window():
         self.authorization_label.pack()
 
         # метка для поля ввода имени
-        self.username_label = Label(self.window, text='Логин', font=label_font, **base_padding)
-        self.username_label.pack()
+        self.login_label = Label(self.window, text='Логин', font=label_font, **base_padding)
+        self.login_label.pack()
 
         # поле ввода имени
-        self.username_entry = Entry(self.window, bg='#fff', fg='#444', font=font_entry)
-        self.username_entry.pack()
-        self.username_entry.focus()
+        self.login_entry = Entry(self.window, bg='#fff', fg='#444', font=font_entry)
+        self.login_entry.pack()
+        self.login_entry.focus()
 
         # метка для поля ввода пароля
         self.password_label = Label(self.window, text='Пароль', font=label_font, **base_padding)
@@ -122,7 +121,7 @@ class Registration_window():
 
 
     def registration(self):
-        username = self.username_entry.get()
+        login = self.login_entry.get()
         password = self.password_entry.get()
         repeat_password = self.repeat_password_entry.get()
 
@@ -160,3 +159,4 @@ class Main_window():
 
 if __name__ == '__main__':
     Login_window()
+
