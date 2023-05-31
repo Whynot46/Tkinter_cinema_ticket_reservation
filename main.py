@@ -255,7 +255,7 @@ class Main_window():
         film_name_1.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
         film_description_1 = CTk.CTkLabel(self.film_frame_1, text=Film.current_film_description(Film, 4))
         film_description_1.grid(row=2, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_1 = CTk.CTkButton(self.film_frame_1, text='Купить билет', command=self.buy_ticket(4))
+        buy_ticket_btn_1 = CTk.CTkButton(self.film_frame_1, text='Купить билет', command=lambda: self.buy_ticket(4))
         buy_ticket_btn_1.grid(row=3, column=1, sticky="s")
 
 
@@ -270,7 +270,7 @@ class Main_window():
         film_name_2.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
         film_description_2 = CTk.CTkLabel(self.film_frame_2, text=Film.current_film_description(Film, 2))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_2 = CTk.CTkButton(self.film_frame_2, text='Купить билет', command=self.buy_ticket(2))
+        buy_ticket_btn_2 = CTk.CTkButton(self.film_frame_2, text='Купить билет', command=lambda: self.buy_ticket(2))
         buy_ticket_btn_2.grid(row=2, column=1, sticky="s")
 
 
@@ -285,7 +285,7 @@ class Main_window():
         film_name_3.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
         film_description_2 = CTk.CTkLabel(self.film_frame_3, text=Film.current_film_description(Film, 3))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', command=self.buy_ticket(3))
+        buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', command=lambda: self.buy_ticket(3))
         buy_ticket_btn_3.grid(row=2, column=1, sticky="s")
 
     def open_cinema_window(self): 
@@ -319,9 +319,10 @@ class Main_window():
         user_name.pack()
 
     def change_appearance_mode_event(self, new_appearance_mode):
-        set_appearance_mode(new_appearance_mode)
+        CTk.set_appearance_mode(new_appearance_mode)
 
-    def buy_ticket(self, id): pass
+    def buy_ticket(self, film_id): 
+        Buy_ticket(film_id)
 
     def logout(self):
         self.window.destroy()
@@ -348,7 +349,56 @@ class Data_base():
     def save_data_base(self):
         self.wb_films.save('./db/films.xlsx')
         self.wb_users.save('./db/users.xlsx')
+ 
+
+class Buy_ticket():
+    def __init__(self, film_id):
+        self.window = CTk.CTkToplevel()
+        self.window.title("Бронирование")
+        self.window.geometry('350x370')
+        self.window.resizable(False, False)
+        self.create_buy_ticket_form(film_id)
+
+    def create_buy_ticket_form(self, film_id):
+
+        film_name = CTk.CTkLabel(self.window, text='<Название_фильма>  6+', **base_padding)
+        film_name.pack()
+
+        time_label = CTk.CTkLabel(self.window, text='Время', **base_padding)
+        time_label.pack()
+        time_arr = ['9:00', '11:30', '14:00']
+        time = CTk.CTkOptionMenu(self.window, values=time_arr)
+        time.pack()
+
+        row_label = CTk.CTkLabel(self.window, text='Ряд', **base_padding)
+        row_label.pack()
+        row_arr = list(map(str, range(1, 5)))
+        row = CTk.CTkOptionMenu(self.window, values=row_arr)
+        row.pack()
+
+        place_label = CTk.CTkLabel(self.window, text='Место', **base_padding)
+        place_label.pack()
+        place_arr = list(map(str, range(1, 5)))
+        place = CTk.CTkOptionMenu(self.window, values=place_arr)
+        place.pack()
+
+        username_label = CTk.CTkLabel(self.window, text='ФИО зрителя', **base_padding)
+        username_label.pack()
+        username_entry = CTk.CTkEntry(self.window)
+        username_entry.pack()
+
+        price = CTk.CTkLabel(self.window, text='Цена билета: <цена>\n(оплата при входе в зрительный зал)', **base_padding)
+        price.pack()
+
+        buy_btn = CTk.CTkButton(self.window, text='Купить')
+        buy_btn.pack()
+    
+
         
+
+
+
+
 #Фильмы
 class Film():
     def __init__(self):
@@ -403,7 +453,7 @@ if __name__ == '__main__':
     except: 
         messagebox.showerror('Ошибка', 'Ошибка загрузки данных пользователя')
         exit()
-    try: 
+    try:
         Login_window()
     except: 
         messagebox.showerror('Ошибка', 'Ошибка загрузки интерфейса Tkinter')
