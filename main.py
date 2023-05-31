@@ -342,6 +342,11 @@ class Data_base():
     films_sheet = wb_films['Фильмы']
     auditorium_sheet = wb_films['Залы']
     schedule_sheet = wb_films['Расписание_фильмов']
+    auditorium_1 = wb_films['Зал_1']
+    auditorium_2 = wb_films['Зал_2']
+    auditorium_3 = wb_films['Зал_3']
+    auditorium_4 = wb_films['Зал_4']
+    auditorium_5 = wb_films['Зал_5']
 
     wb_users= load_workbook('./db/users.xlsx')
     users_sheet = wb_users['users']
@@ -355,48 +360,80 @@ class Buy_ticket():
     def __init__(self, film_id):
         self.window = CTk.CTkToplevel()
         self.window.title("Бронирование")
-        self.window.geometry('350x370')
+        self.window.geometry('350x530')
         self.window.resizable(False, False)
         self.create_buy_ticket_form(film_id)
 
     def create_buy_ticket_form(self, film_id):
 
-        film_name = CTk.CTkLabel(self.window, text='<Название_фильма>  6+', **base_padding)
+        film_name = CTk.CTkLabel(self.window, text=f'{Film.current_film_name(Film, film_id)} {Film.current_film_age_limit(Film, film_id)}', **base_padding)
         film_name.pack()
+
+        date_label = CTk.CTkLabel(self.window, text='Дата', **base_padding)
+        date_label.pack()
+        date_arr = Movie_schedule().session_date(film_id)
+        self.date_menu = CTk.CTkOptionMenu(self.window, values=date_arr, dynamic_resizing=True)
+        self.date_menu.pack()
+        data = self.date_menu.get()
+
+        auditorium_label = CTk.CTkLabel(self.window, text='Зал', **base_padding)
+        auditorium_label.pack()
+        auditorium_arr = Movie_schedule().session_auditorium(film_id, data)
+        self.auditorium_menu = CTk.CTkOptionMenu(self.window, values=auditorium_arr, dynamic_resizing=True)
+        self.auditorium_menu.pack()
+        auditorium = self.auditorium_menu.get()
 
         time_label = CTk.CTkLabel(self.window, text='Время', **base_padding)
         time_label.pack()
-        time_arr = ['9:00', '11:30', '14:00']
-        time = CTk.CTkOptionMenu(self.window, values=time_arr)
-        time.pack()
+        time_arr = Movie_schedule().session_time(film_id, auditorium)
+        self.time_menu = CTk.CTkOptionMenu(self.window, values=time_arr, command = self.update_price, dynamic_resizing=True)
+        self.time_menu.pack()
 
         row_label = CTk.CTkLabel(self.window, text='Ряд', **base_padding)
         row_label.pack()
         row_arr = list(map(str, range(1, 5)))
-        row = CTk.CTkOptionMenu(self.window, values=row_arr)
-        row.pack()
+        self.row_menu = CTk.CTkOptionMenu(self.window, values=row_arr, command=self.update_row, dynamic_resizing=True)
+        self.row_menu.pack()
 
         place_label = CTk.CTkLabel(self.window, text='Место', **base_padding)
         place_label.pack()
         place_arr = list(map(str, range(1, 5)))
-        place = CTk.CTkOptionMenu(self.window, values=place_arr)
-        place.pack()
+        self.place_menu = CTk.CTkOptionMenu(self.window, values=place_arr, dynamic_resizing=True)
+        self.place_menu.pack()
+        self.update_row(None)
 
         username_label = CTk.CTkLabel(self.window, text='ФИО зрителя', **base_padding)
         username_label.pack()
         username_entry = CTk.CTkEntry(self.window)
         username_entry.pack()
 
-        price = CTk.CTkLabel(self.window, text='Цена билета: <цена>\n(оплата при входе в зрительный зал)', **base_padding)
-        price.pack()
+        self.price_label = CTk.CTkLabel(self.window, text=f'Цена билета: None\n(оплата при входе в зрительный зал)', **base_padding)
+        self.price_label.pack()
+        self.update_price(None)
 
         buy_btn = CTk.CTkButton(self.window, text='Купить')
         buy_btn.pack()
-    
 
-        
+    def update_row(self, row_menu):
+        current_auditorium = self.time_menu.get()
+        line = 1
+        while line <= int(Data_base().auditorium_sheet['E2'].value)+1:
+            if str(Data_base().schedule_sheet[f'A{line}'].value) == current_auditorium:
+                max_row = str(Data_base().schedule_sheet[f'C{line}'].value)
+                row_arr = list(map(str, range(1, max_row)))
+                self.row_menu.configure(values=row_arr)
+                break
+            line+=1
 
-
+    def update_price(self, time_menu):
+        current_time = self.time_menu.get()
+        line = 1
+        while line <= int(Data_base().schedule_sheet['H2'].value)+1:
+            if str(Data_base().schedule_sheet[f'F{line}'].value) == current_time:
+                price = str(Data_base().schedule_sheet[f'C{line}'].value)
+                self.price_label.configure(text = f'Цена билета: {price}\n(оплата при входе в зрительный зал)')
+                break
+            line+=1
 
 
 #Фильмы
@@ -440,7 +477,45 @@ class Film():
         current_line = self.current_line(self, id)
         age_limit = f'{Data_base().films_sheet[f"F{current_line}"].value}+'
         return age_limit
-        
+  
+
+class Movie_schedule():
+    def current_lines(self, current_string):
+        line = 1
+        lines = []
+        while line!=Data_base().schedule_sheet[f'H2'].value+2:
+            if Data_base().schedule_sheet[f'B{line}'].value == current_string : lines.append(line)
+            line+=1
+        return lines
+
+    def session_date(self, film_id):
+        session_date_arr = []
+        lines = self.current_lines(film_id)
+        for line in lines:
+            if str(Data_base().schedule_sheet[f'E{line}'].value) in session_date_arr: continue
+            session_date_arr.append(str(Data_base().schedule_sheet[f'E{line}'].value))
+        return session_date_arr
+
+    def session_auditorium(self, film_id, date):
+        session_auditorium_arr = []
+        lines = self.current_lines(film_id)
+        for line in lines:
+            if str(Data_base().schedule_sheet[f'E{line}'].value) == date:
+                if str(Data_base().schedule_sheet[f'A{line}'].value) in session_auditorium_arr: continue
+                session_auditorium_arr.append(str(Data_base().schedule_sheet[f'A{line}'].value))
+            return session_auditorium_arr
+
+    def session_time(self, film_id, auditorium):
+        session_time_arr = []
+        lines = self.current_lines(film_id)
+        for line in lines:
+            if str(Data_base().schedule_sheet[f'A{line}'].value) == auditorium:
+                if str(Data_base().schedule_sheet[f'F{line}'].value) in session_time_arr: continue
+                session_time_arr.append(str(Data_base().schedule_sheet[f'F{line}'].value))
+            return session_time_arr
+
+
+
         
 if __name__ == '__main__':
     try: 
