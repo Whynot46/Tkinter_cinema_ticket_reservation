@@ -1,7 +1,7 @@
-Username: Гайдуков Андрей
-Film_name: Выживший
-Data: 22.04.23
-Time: 11:30
-Auditorium: 2
-Row: 1
-Place: 1
+Username:Гайдуков Андрей
+Film_name:Выживший
+Data:22.04.23
+Time:11:30
+Auditorium:2
+Row:1
+Place:1

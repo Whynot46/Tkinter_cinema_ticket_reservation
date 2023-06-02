@@ -7,6 +7,7 @@ from db import *
 from user import *
 from films import *
 from settings import *
+from buy_ticket import *
 
 
 # Окно авторизации
@@ -87,7 +88,7 @@ class Login_window():
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
 
-
+#Окно импорта файла
 class Import_file():
     def __init__(self):
         self.window = CTk.CTkToplevel()
@@ -103,7 +104,7 @@ class Import_file():
         self.files_menu = self.date_menu = CTk.CTkOptionMenu(self.window, values=self.files_arr, dynamic_resizing=True)
         self.files_menu.pack()
 
-        self.send_btn = CTk.CTkButton(self.window, text='Импортировать')
+        self.send_btn = CTk.CTkButton(self.window, text='Импортировать', command=self.scan_file)
         self.send_btn.pack(**base_padding)
 
     def scan_directory(self):
@@ -115,6 +116,44 @@ class Import_file():
                 is_file = True
         if not is_file:
             self.files_arr.append('None')
+
+    def scan_file(self):
+        file_name = self.files_menu.get()
+        file = open(file_name, 'r')
+        while True:
+            line = file.readline()
+            parameter = line.partition(':')[0]
+            parameter_data = line.partition(':')[2]
+            if parameter == 'Username':
+                username=parameter_data.replace('\n','')
+            elif parameter =='Film_name':
+                film_name = parameter_data.replace(' ','').replace('\n','')
+            elif parameter =='Data':
+                data = parameter_data.replace(' ','').replace('\n','')
+            elif parameter =='Time':
+                time = parameter_data.replace(' ','').replace('\n','')
+            elif parameter =='Auditorium':
+                auditorium = parameter_data.replace(' ','').replace('\n','')
+            elif parameter =='Row':
+                row = parameter_data.replace(' ','').replace('\n','')
+            elif parameter =='Place':
+                place = parameter_data.replace(' ','').replace('\n','')
+            if not line:
+                break
+        file.close()
+        
+        film_id = None
+        line = 2
+        is_movie_exist = False
+        while line!=Data_base().films_sheet[f'J2'].value+2:
+            if film_name == str(Data_base().films_sheet[f'B{line}'].value): 
+                film_id = Data_base().films_sheet[f'A{line}'].value
+                is_movie_exist = True
+                break
+            line+=1
+        if is_movie_exist:
+            buy(username, film_id, data, time, auditorium, row, place)
+        else: messagebox.showerror('Ошибка', 'Неккоректное имя фильма')
         
 # Окно регистрации
 class Registration_window():
@@ -382,7 +421,7 @@ class Main_window():
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
 
-
+#Бронирование билета
 class Buy_ticket():
     def __init__(self, film_id):
         self.window = CTk.CTkToplevel()
@@ -475,6 +514,7 @@ class Movie_schedule():
             if Data_base().schedule_sheet[f'B{line}'].value == current_string: lines.append(line)
             line += 1
         return lines
+    
 
     def session_date(self, film_id):
         session_date_arr = []
