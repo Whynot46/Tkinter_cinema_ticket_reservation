@@ -1,18 +1,11 @@
 import customtkinter as CTk
 from tkinter import messagebox
-import datetime
 from random import randint
-from src.db import *
-from src.user import *
-from src.films import *
-
-base_padding = {'padx': 10, 'pady': 8}
-header_padding = {'padx': 10, 'pady': 12}
-
-data = datetime.datetime.today()
-
-CTk.set_appearance_mode("System")  # Modes: system (default), light, dark
-CTk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
+from sys import platform
+from db import *
+from user import *
+from films import *
+from settings import *
 
 
 # Окно авторизации
@@ -102,7 +95,6 @@ class Registration_window():
         self.user_registration()
 
     def user_registration(self):
-
         self.authorization_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/new_user_icon.png'),
                                                    dark_image=Image.open('./img/icons/new_user_icon.png'),
                                                    size=(128, 128))
@@ -131,7 +123,7 @@ class Registration_window():
         self.login_entry.pack()
         self.login_entry.focus()
 
-        self.email_label = CTk.CTkLabel(self.window, text='GMAIL', **base_padding)
+        self.email_label = CTk.CTkLabel(self.window, text='E-mail', **base_padding)
         self.email_label.pack()
 
         # поле ввода логина
@@ -154,7 +146,7 @@ class Registration_window():
         self.repeat_password_entry.pack()
 
     # кнопка отправки формы
-        self.send_btn = CTk.CTkButton(self.window, text='Сгенерировать код', command=self.generate_and_send_code)
+        self.send_btn = CTk.CTkButton(self.window, text='Выслать код подтверждения на email', command=self.generate_and_send_code)
         self.send_btn.pack(**base_padding)
 
         self.code_label = CTk.CTkLabel(self.window, text='Код подтверждения', **base_padding)
@@ -169,6 +161,9 @@ class Registration_window():
 
     def generate_and_send_code(self):
         self.code = str(randint(100000, 999999))
+        letter = f'Вас приветствует кинотеатр Tkinter-cinema!\nВаш код для подтверждения регистрации: {self.code}\nЕсли вы не запрашивали этот код, просто проигнорируйте это сообщение'
+
+        send_to_email(self.email_entry.get(), letter)
         print(self.code)
 
     def confirm(self):
@@ -211,8 +206,12 @@ class Main_window():
     def __init__(self):
         self.window = CTk.CTk()
         self.window.title('Резервирование билетов в кинотеатр')
-        # self.window.state('zoomed') #Под Windows, если не раскрывается в полный экран, заккоментируйте следующую строчку
-        self.window.attributes('-zoomed', True)
+        if platform == "linux" or platform == "linux2":
+            self.window.attributes('-zoomed', True)
+        elif platform == "darwin":
+            self.window.attributes('-zoomed', True)
+        elif platform == "win32":
+            self.window.state('zoomed')
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(1, weight=1)
         self.window.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -289,7 +288,7 @@ class Main_window():
         buy_ticket_btn_2.grid(row=2, column=1, sticky="s")
 
         self.film_frame_3 = CTk.CTkFrame(self.current_frame, fg_color="transparent")
-        self.filmate_frame_3.grid(row=2, column=0, sticky="w", pady=5)
+        self.film_frame_3.grid(row=2, column=0, sticky="w", pady=5)
         # self.film_frame_3.grid_columnconfigure(0, weight=1)
 
         film_icon_img_3 = Film.current_film_icon(Film, 3)
@@ -482,11 +481,8 @@ if __name__ == '__main__':
     except:
         messagebox.showerror('Ошибка', 'Ошибка загрузки данных пользователя')
         exit()
-    '''
     try:
         Login_window()
     except: 
         messagebox.showerror('Ошибка', 'Ошибка загрузки интерфейса Tkinter')
         exit()
-    '''
-    Login_window()
