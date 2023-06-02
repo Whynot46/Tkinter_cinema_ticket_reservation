@@ -2,6 +2,7 @@ import customtkinter as CTk
 from tkinter import messagebox
 from random import randint
 from sys import platform
+import os
 from db import *
 from user import *
 from films import *
@@ -13,7 +14,7 @@ class Login_window():
     def __init__(self):
         self.window = CTk.CTk()
         self.window.title('Авторизация')
-        self.window.geometry('350x400')
+        self.window.geometry('350x430')
         self.window.resizable(False, False)
 
         self.cinema_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/login_icon.png'),
@@ -52,6 +53,10 @@ class Login_window():
         self.registration_button = CTk.CTkButton(self.window, text='Регистрация', command=self.to_registration)
         self.registration_button.pack(**base_padding)
 
+        # кнопка отправки формы
+        self.import_file_btn = CTk.CTkButton(self.window, text='Импортировать текстовый файл', command=lambda: Import_file())
+        self.import_file_btn.pack(**base_padding)
+
         self.window.protocol("WM_DELETE_WINDOW", self.on_exit)
 
         self.window.mainloop()
@@ -83,6 +88,34 @@ class Login_window():
             self.window.destroy()
 
 
+class Import_file():
+    def __init__(self):
+        self.window = CTk.CTkToplevel()
+        self.window.title("Импортировать файл для заказа билета")
+        self.window.geometry("400x120")
+        self.window.resizable(False, False)
+        self.files_arr = []
+        self.scan_directory()
+
+        self.files_label = CTk.CTkLabel(self.window, text='Выберите .txt файл из текущей директории', **header_padding)
+        self.files_label.pack()
+
+        self.files_menu = self.date_menu = CTk.CTkOptionMenu(self.window, values=self.files_arr, dynamic_resizing=True)
+        self.files_menu.pack()
+
+        self.send_btn = CTk.CTkButton(self.window, text='Импортировать')
+        self.send_btn.pack(**base_padding)
+
+    def scan_directory(self):
+        files = os.listdir('./')
+        is_file = False
+        for file in files:
+            if file[-4:] == '.txt':
+                self.files_arr.append(file)
+                is_file = True
+        if not is_file:
+            self.files_arr.append('None')
+        
 # Окно регистрации
 class Registration_window():
     def __init__(self):
