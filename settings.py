@@ -11,6 +11,7 @@ data = datetime.datetime.today()
 set_appearance_mode("System")  # Modes: system (default), light, dark
 set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
+#Отправка кода подтверждения на почту
 def send_to_email(email, letter):
     login = 'Tkinter-cinema@yandex.ru'
     password = 'ehnznlmpdooacens'

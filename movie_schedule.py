@@ -2,6 +2,7 @@ from db import *
 
 
 class Movie_schedule():
+    #Определение выбранных строк в базе данных
     def current_lines(self, current_string):
         line = 1
         lines = []
@@ -10,7 +11,7 @@ class Movie_schedule():
             line += 1
         return lines
     
-
+    #Определение дат показов фильмов
     def session_date(self, film_id):
         session_date_arr = []
         lines = self.current_lines(film_id)
@@ -19,6 +20,7 @@ class Movie_schedule():
             session_date_arr.append(str(Data_base().schedule_sheet[f'E{line}'].value))
         return session_date_arr
 
+    #Определение залов показа фильмов
     def session_auditorium(self, film_id, date):
         session_auditorium_arr = []
         lines = self.current_lines(film_id)
@@ -28,6 +30,7 @@ class Movie_schedule():
                 session_auditorium_arr.append(str(Data_base().schedule_sheet[f'A{line}'].value))
             return session_auditorium_arr
 
+    #Определение времени показа фильмов
     def session_time(self, film_id, auditorium):
         session_time_arr = []
         lines = self.current_lines(film_id)

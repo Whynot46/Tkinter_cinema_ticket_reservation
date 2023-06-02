@@ -10,6 +10,7 @@ class User():
         self.password = None
         self.repeat_password = None
         self.code = None
+        
     #Обновление локальных пользовательских данных
     def change_user_data(self, login):
         line = 1

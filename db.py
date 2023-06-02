@@ -15,6 +15,7 @@ class Data_base():
     wb_users= load_workbook('./db/users.xlsx')
     users_sheet = wb_users['users']
 
+    #Сохранение базы данных
     def save_data_base(self):
         self.wb_films.save('./db/films.xlsx')
         self.wb_users.save('./db/users.xlsx')

@@ -24,6 +24,7 @@ class Login_window():
                                             size=(128, 128))
         self.user_login()
 
+    #Форма для авторизации
     def user_login(self):
         self.cinema_icon = CTk.CTkLabel(self.window, text="", image=self.cinema_icon_img)
         self.cinema_icon.pack()
@@ -31,31 +32,25 @@ class Login_window():
         self.authorization_label = CTk.CTkLabel(self.window, text='Авторизация', **header_padding)
         self.authorization_label.pack()
 
-        # метка для поля ввода имени
         self.login_label = CTk.CTkLabel(self.window, text='Логин', **base_padding)
         self.login_label.pack()
 
-        # поле ввода имени
         self.login_entry = CTk.CTkEntry(self.window)
         self.login_entry.pack()
         self.login_entry.focus()
 
-        # метка для поля ввода пароля
         self.password_label = CTk.CTkLabel(self.window, text='Пароль', **base_padding)
         self.password_label.pack()
 
-        # поле ввода пароля
         self.password_entry = CTk.CTkEntry(self.window)
         self.password_entry.pack()
 
-        # кнопка отправки формы
         self.send_btn = CTk.CTkButton(self.window, text='Войти', command=self.login)
         self.send_btn.pack(**base_padding)
 
         self.registration_button = CTk.CTkButton(self.window, text='Регистрация', command=self.to_registration)
         self.registration_button.pack(**base_padding)
 
-        # кнопка отправки формы
         self.import_file_btn = CTk.CTkButton(self.window, text='Импортировать текстовый файл', command=lambda: Import_file())
         self.import_file_btn.pack(**base_padding)
 
@@ -63,6 +58,7 @@ class Login_window():
 
         self.window.mainloop()
 
+    #Авторизация пользователя
     def login(self):
         login = self.login_entry.get()
         password = self.password_entry.get()
@@ -82,9 +78,11 @@ class Login_window():
                 line += 1
             if not all_ok: messagebox.showerror('Ошибка', 'Неверный логин или пароль')
 
+    #Переадресация на форму регистрации
     def to_registration(self):
         Registration_window()
 
+    #Подтверждение выхода
     def on_exit(self):
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
@@ -108,6 +106,7 @@ class Import_file():
         self.send_btn = CTk.CTkButton(self.window, text='Импортировать', command=self.scan_file)
         self.send_btn.pack(**base_padding)
 
+    #сканирование текущей директории
     def scan_directory(self):
         files = os.listdir('./')
         is_file = False
@@ -118,6 +117,7 @@ class Import_file():
         if not is_file:
             self.files_arr.append('None')
 
+    #сканирование выбранного файла
     def scan_file(self):
         file_name = self.files_menu.get()
         file = open(file_name, 'r')
@@ -167,6 +167,7 @@ class Registration_window():
         self.code = None
         self.user_registration()
 
+    #Форма для регистрации пользователя
     def user_registration(self):
         self.authorization_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/new_user_icon.png'),
                                                    dark_image=Image.open('./img/icons/new_user_icon.png'),
@@ -176,14 +177,11 @@ class Registration_window():
         self.authorization_icon.pack()
 
         self.authorization_label = CTk.CTkLabel(self.window, text='Регистрация', **header_padding)
-        # помещаем виджет в окно по принципу один виджет под другим
         self.authorization_label.pack()
 
-        # метка для поля ввода имени
         self.name_label = CTk.CTkLabel(self.window, text='ФИО', **base_padding)
         self.name_label.pack()
 
-        # поле ввода имени
         self.name_entry = CTk.CTkEntry(self.window)
         self.name_entry.pack()
         self.name_entry.focus()
@@ -191,34 +189,27 @@ class Registration_window():
         self.login_label = CTk.CTkLabel(self.window, text='Логин', **base_padding)
         self.login_label.pack()
 
-        # поле ввода логина
         self.login_entry = CTk.CTkEntry(self.window)
         self.login_entry.pack()
-        self.login_entry.focus()
 
         self.email_label = CTk.CTkLabel(self.window, text='E-mail', **base_padding)
         self.email_label.pack()
 
-        # поле ввода логина
         self.email_entry = CTk.CTkEntry(self.window)
         self.email_entry.pack()
 
         self.password_label = CTk.CTkLabel(self.window, text='Пароль', **base_padding)
         self.password_label.pack()
 
-        # поле ввода пароля
         self.password_entry = CTk.CTkEntry(self.window)
         self.password_entry.pack()
 
-        # метка для поля ввода пароля
         self.repeat_password_label = CTk.CTkLabel(self.window, text='Повторите пароль', **base_padding)
         self.repeat_password_label.pack()
 
-        # поле ввода пароля
         self.repeat_password_entry = CTk.CTkEntry(self.window)
         self.repeat_password_entry.pack()
 
-    # кнопка отправки формы
         self.send_btn = CTk.CTkButton(self.window, text='Выслать код подтверждения на email', command=self.generate_and_send_code)
         self.send_btn.pack(**base_padding)
 
@@ -228,17 +219,17 @@ class Registration_window():
         self.code_entry = CTk.CTkEntry(self.window)
         self.code_entry.pack()
 
-        # кнопка отправки формы
         self.send_btn = CTk.CTkButton(self.window, text='Принять', command=self.confirm)
         self.send_btn.pack(**base_padding)
 
+    #Генерация и отправка кода подтверждения на почту
     def generate_and_send_code(self):
         self.code = str(randint(100000, 999999))
         letter = f'Вас приветствует кинотеатр Tkinter-cinema!\nВаш код для подтверждения регистрации: {self.code}\nЕсли вы не запрашивали этот код, просто проигнорируйте это сообщение'
-
         send_to_email(self.email_entry.get(), letter)
         print(self.code)
 
+    #Проверка правильности заполнения формы регистрации
     def confirm(self):
         User.name = self.name_entry.get()
         User.login = self.login_entry.get()
@@ -255,6 +246,7 @@ class Registration_window():
         else:
             self.registration()
 
+    #Регистрация пользователя в приложении
     def registration(self):
         current_line = Data_base.users_sheet[f'I2'].value + 2
         Data_base.users_sheet[f'A{current_line}'] = Data_base().users_sheet[f'I2'].value + 1
@@ -270,6 +262,7 @@ class Registration_window():
         Data_base.save_data_base(Data_base)
         self.window.destroy()
 
+    #Подтверждение выхода
     def on_exit(self):
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
@@ -326,6 +319,7 @@ class Main_window():
 
         self.open_cinema_window()
 
+    #Открытие вкладки Афиша
     def open_poster_window(self):
 
         self.current_frame.destroy()
@@ -374,6 +368,7 @@ class Main_window():
         buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', command=lambda: self.buy_ticket(3))
         buy_ticket_btn_3.grid(row=2, column=1, sticky="s")
 
+    #Открытие вкладки Кинотеатр
     def open_cinema_window(self):
 
         self.current_frame.destroy()
@@ -389,6 +384,7 @@ class Main_window():
         cinema_name = CTk.CTkLabel(self.current_frame, text='Кинотеатр "Художественный фильм"')
         cinema_name.pack()
 
+    #Открытие вкладки Личный кабинет
     def open_account_window(self):
 
         self.current_frame.destroy()
@@ -404,20 +400,25 @@ class Main_window():
         user_name = CTk.CTkLabel(self.current_frame, text=User.login)
         user_name.pack()
 
+    #Смена темы приложения
     def change_appearance_mode_event(self, new_appearance_mode):
         CTk.set_appearance_mode(new_appearance_mode)
 
+    #Переадресация на форму бронирования билета
     def buy_ticket(self, film_id):
         Buy_ticket(film_id)
 
+    #Выход из учётной записи
     def logout(self):
         self.window.destroy()
         Login_window()
 
+    #Переадресация на форму регистрации
     def registration(self):
         self.window.destroy()
         Registration_window()
 
+    #Подтверждение выхода
     def on_exit(self):
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
@@ -431,6 +432,7 @@ class Buy_ticket():
         self.window.resizable(False, False)
         self.create_buy_ticket_form(film_id)
 
+    #Формирание формы бронирования билетов
     def create_buy_ticket_form(self, film_id):
 
         film_name = CTk.CTkLabel(self.window,
