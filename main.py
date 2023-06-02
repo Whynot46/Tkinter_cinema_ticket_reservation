@@ -1,34 +1,21 @@
-import os
-from PIL import Image
 import customtkinter as CTk
 from tkinter import messagebox
-from openpyxl import load_workbook
-
+import datetime
+from random import randint
+from src.db import *
+from src.user import *
+from src.films import *
 
 base_padding = {'padx': 10, 'pady': 8}
 header_padding = {'padx': 10, 'pady': 12}
 
+data = datetime.datetime.today()
+
 CTk.set_appearance_mode("System")  # Modes: system (default), light, dark
 CTk.set_default_color_theme("blue")  # Themes: blue (default), dark-blue, green
 
-#Локальные данные пользователя
-class User():
-    def __init__(self):
-        self.name = 'Guest'
-        self.login = 'None'
-        self.password = ''
-    #Обновление локальных пользовательских данных
-    def change_user_data(self, login):
-        line = 1
-        while line!=Data_base().users_sheet[f'I2'].value+2:
-            if Data_base().users_sheet[f'C{line}'].value == login:
-                self.name = Data_base().users_sheet[f'B{line}'].value
-                self.login = Data_base().users_sheet[f'C{line}'].value
-                self.password = Data_base().users_sheet[f'D{line}'].value
-                break
-            line+=1
 
-#Окно авторизации
+# Окно авторизации
 class Login_window():
     def __init__(self):
         self.window = CTk.CTk()
@@ -37,10 +24,9 @@ class Login_window():
         self.window.resizable(False, False)
 
         self.cinema_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/login_icon.png'),
-                                  dark_image=Image.open('./img/icons/login_icon.png'),
-                                  size=(128, 128))
+                                            dark_image=Image.open('./img/icons/login_icon.png'),
+                                            size=(128, 128))
         self.user_login()
-
 
     def user_login(self):
         self.cinema_icon = CTk.CTkLabel(self.window, text="", image=self.cinema_icon_img)
@@ -77,50 +63,50 @@ class Login_window():
 
         self.window.mainloop()
 
-
     def login(self):
         login = self.login_entry.get()
         password = self.password_entry.get()
         all_ok = False
         line = 1
 
-        if login=='' or password=='':
+        if login == '' or password == '':
             messagebox.showerror('Ошибка', 'Заполните все поля')
         else:
-            while line!=Data_base().users_sheet[f'I2'].value+2:
-                if (Data_base().users_sheet[f'C{line}'].value == login) and (Data_base().users_sheet[f'D{line}'].value == password):
+            while line != Data_base().users_sheet[f'I2'].value + 2:
+                if (Data_base().users_sheet[f'C{line}'].value == login) and (
+                        Data_base().users_sheet[f'D{line}'].value == password):
                     all_ok = True
                     User.change_user_data(User, login)
                     self.window.destroy()
                     Main_window()
-                line+=1
+                line += 1
             if not all_ok: messagebox.showerror('Ошибка', 'Неверный логин или пароль')
-
 
     def to_registration(self):
         Registration_window()
-
 
     def on_exit(self):
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
 
-#Окно регистрации
+
+# Окно регистрации
 class Registration_window():
     def __init__(self):
         self.window = CTk.CTkToplevel()
         self.window.title("Регистрация")
-        self.window.geometry("300x465")
+        self.window.geometry("300x630")
         self.window.resizable(False, False)
         self.window.protocol("WM_DELETE_WINDOW", self.on_exit)
+        self.code = None
         self.user_registration()
 
     def user_registration(self):
 
         self.authorization_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/new_user_icon.png'),
-                                  dark_image=Image.open('./img/icons/new_user_icon.png'),
-                                  size=(128, 128))
-        
+                                                   dark_image=Image.open('./img/icons/new_user_icon.png'),
+                                                   size=(128, 128))
+
         self.authorization_icon = CTk.CTkLabel(self.window, text="", image=self.authorization_icon_img)
         self.authorization_icon.pack()
 
@@ -140,12 +126,18 @@ class Registration_window():
         self.login_label = CTk.CTkLabel(self.window, text='Логин', **base_padding)
         self.login_label.pack()
 
-        # поле ввода имени
+        # поле ввода логина
         self.login_entry = CTk.CTkEntry(self.window)
         self.login_entry.pack()
         self.login_entry.focus()
 
-        # метка для поля ввода пароля
+        self.email_label = CTk.CTkLabel(self.window, text='GMAIL', **base_padding)
+        self.email_label.pack()
+
+        # поле ввода логина
+        self.email_entry = CTk.CTkEntry(self.window)
+        self.email_entry.pack()
+
         self.password_label = CTk.CTkLabel(self.window, text='Пароль', **base_padding)
         self.password_label.pack()
 
@@ -161,46 +153,65 @@ class Registration_window():
         self.repeat_password_entry = CTk.CTkEntry(self.window)
         self.repeat_password_entry.pack()
 
-        # кнопка отправки формы
-        self.send_btn = CTk.CTkButton(self.window, text='Принять', command=self.registration)
+    # кнопка отправки формы
+        self.send_btn = CTk.CTkButton(self.window, text='Сгенерировать код', command=self.generate_and_send_code)
         self.send_btn.pack(**base_padding)
 
+        self.code_label = CTk.CTkLabel(self.window, text='Код подтверждения', **base_padding)
+        self.code_label.pack()
+
+        self.code_entry = CTk.CTkEntry(self.window)
+        self.code_entry.pack()
+
+        # кнопка отправки формы
+        self.send_btn = CTk.CTkButton(self.window, text='Принять', command=self.confirm)
+        self.send_btn.pack(**base_padding)
+
+    def generate_and_send_code(self):
+        self.code = str(randint(100000, 999999))
+        print(self.code)
+
+    def confirm(self):
+        User.name = self.name_entry.get()
+        User.login = self.login_entry.get()
+        User.email = self.email_entry.get()
+        User.password = self.password_entry.get()
+        User.repeat_password = self.repeat_password_entry.get()
+        User.code = self.code_entry.get()
+        if User.login == '' or User.password == '' or User.repeat_password == '' or User.email == '':
+            messagebox.showerror('Ошибка', 'Заполните все поля')
+        elif User.password != User.repeat_password:
+            messagebox.showerror('Ошибка', 'Пароли не совпадают')
+        elif User.code != self.code:
+            messagebox.showerror('Ошибка', 'Неверный код')
+        else:
+            self.registration()
 
     def registration(self):
-        name = self.name_entry.get()
-        login = self.login_entry.get()
-        password = self.password_entry.get()
-        repeat_password = self.repeat_password_entry.get()
-
-        if login=='' or password=='' or repeat_password=='':
-            messagebox.showerror('Ошибка', 'Заполните все поля')
-        elif password != repeat_password:
-            messagebox.showerror('Ошибка', 'Пароли не совпадают')
-        else:
-            current_line = Data_base.users_sheet[f'I2'].value+2
-            Data_base.users_sheet[f'A{current_line}'] = Data_base().users_sheet[f'I2'].value+1
-            Data_base.users_sheet[f'B{current_line}'] = name
-            Data_base.users_sheet[f'C{current_line}'] = login
-            Data_base.users_sheet[f'D{current_line}'] = password
-            Data_base.users_sheet[f'I2'] = current_line - 1
-            User.change_user_data(User, login)
-            messagebox.showinfo('Успешно', f'Логин: {name}\nПароль: {password}')
-            Data_base.save_data_base(Data_base)
-            self.window.destroy()
-
-
+        current_line = Data_base.users_sheet[f'I2'].value + 2
+        Data_base.users_sheet[f'A{current_line}'] = Data_base().users_sheet[f'I2'].value + 1
+        Data_base.users_sheet[f'B{current_line}'] = User.name
+        Data_base.users_sheet[f'C{current_line}'] = User.login
+        Data_base.users_sheet[f'D{current_line}'] = User.password
+        Data_base.users_sheet[f'E{current_line}'] = User.email
+        Data_base.users_sheet[f'F{current_line}'] = self.code
+        Data_base.users_sheet[f'G{current_line}'] = f'{data.day}.{data.month}.{data.year}' 
+        Data_base.users_sheet[f'I2'] = current_line - 1
+        #User.change_user_data(User, login)
+        messagebox.showinfo('Успешно', f'Логин: {User.name}\nПароль: {User.password}')
+        Data_base.save_data_base(Data_base)
+        self.window.destroy()
 
     def on_exit(self):
-        if messagebox.askokcancel("Прервать регистрацию", "Вы действительно хотите прервать регистрацию?"):
+        if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
-            Login_window()
 
-#Главное окно
+# Главное окно
 class Main_window():
     def __init__(self):
         self.window = CTk.CTk()
         self.window.title('Резервирование билетов в кинотеатр')
-        #self.window.state('zoomed') #Под Windows, если не раскрывается в полный экран, заккоментируйте следующую строчку
+        # self.window.state('zoomed') #Под Windows, если не раскрывается в полный экран, заккоментируйте следующую строчку
         self.window.attributes('-zoomed', True)
         self.window.grid_rowconfigure(0, weight=1)
         self.window.grid_columnconfigure(1, weight=1)
@@ -210,13 +221,19 @@ class Main_window():
         self.top_bar_frame.grid(row=0, column=0, sticky="nsew")
         self.top_bar_frame.grid_rowconfigure(4, weight=1)
 
-        self.poster_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, text='Афиша',fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), anchor="w", command=self.open_poster_window)
+        self.poster_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+                                        text='Афиша', fg_color="transparent", text_color=("gray10", "gray90"),
+                                        hover_color=("gray70", "gray30"), anchor="w", command=self.open_poster_window)
         self.poster_btn.grid(row=0, column=0, sticky="ew")
 
-        self.cinema_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, text='Кинотеатр',fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), anchor="w", command=self.open_cinema_window)
+        self.cinema_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+                                        text='Кинотеатр', fg_color="transparent", text_color=("gray10", "gray90"),
+                                        hover_color=("gray70", "gray30"), anchor="w", command=self.open_cinema_window)
         self.cinema_btn.grid(row=1, column=0, sticky="ew")
 
-        self.account_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, text='Личный кабинет',fg_color="transparent", text_color=("gray10", "gray90"), hover_color=("gray70", "gray30"), anchor="w", command=self.open_account_window)
+        self.account_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+                                         text='Личный кабинет', fg_color="transparent", text_color=("gray10", "gray90"),
+                                         hover_color=("gray70", "gray30"), anchor="w", command=self.open_account_window)
         self.account_btn.grid(row=2, column=0, sticky="ew")
 
         if (User.name != 'Guest') and (User.login != 'None'):
@@ -228,15 +245,14 @@ class Main_window():
             self.account_btn = CTk.CTkButton(self.top_bar_frame, text='Зарегистрируйтесь', command=self.registration)
             self.account_btn.grid(row=9, column=0, sticky="ew", pady=5)
 
-
-        self.appearance_mode_menu = CTk.CTkOptionMenu(self.top_bar_frame, values=['Dark', 'Light', 'System'], command=self.change_appearance_mode_event)
+        self.appearance_mode_menu = CTk.CTkOptionMenu(self.top_bar_frame, values=['System', 'Dark', 'Light'],
+                                                      command=self.change_appearance_mode_event)
         self.appearance_mode_menu.grid(row=10, column=0, padx=20, pady=20, sticky="s")
 
         self.current_frame = CTk.CTkFrame(self.window, corner_radius=0, fg_color="transparent")
         self.current_frame.grid(row=0, column=1)
 
         self.open_cinema_window()
-
 
     def open_poster_window(self):
 
@@ -249,46 +265,44 @@ class Main_window():
         self.film_frame_1.grid(row=0, column=0, sticky="w", pady=5)
 
         film_icon_img_1 = Film.current_film_icon(Film, 4)
-        film_icon_1 = CTk.CTkLabel(self.film_frame_1, text="", justify = 'left', image=film_icon_img_1)
-        film_icon_1.grid(row=0, column=0,rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_1 = CTk.CTkLabel(self.film_frame_1, height=10, justify = 'left', text=Film.current_film_name(Film, 4))
+        film_icon_1 = CTk.CTkLabel(self.film_frame_1, text="", justify='left', image=film_icon_img_1)
+        film_icon_1.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
+        film_name_1 = CTk.CTkLabel(self.film_frame_1, height=10, justify='left', text=Film.current_film_name(Film, 4))
         film_name_1.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
         film_description_1 = CTk.CTkLabel(self.film_frame_1, text=Film.current_film_description(Film, 4))
         film_description_1.grid(row=2, column=1, padx=1, pady=1, sticky='nw')
         buy_ticket_btn_1 = CTk.CTkButton(self.film_frame_1, text='Купить билет', command=lambda: self.buy_ticket(4))
         buy_ticket_btn_1.grid(row=3, column=1, sticky="s")
 
-
         self.film_frame_2 = CTk.CTkFrame(self.current_frame, fg_color="transparent")
         self.film_frame_2.grid(row=1, column=0, sticky="w", pady=5)
-        #self.film_frame_2.grid_columnconfigure(0, weight=1)
+        # self.film_frame_2.grid_columnconfigure(0, weight=1)
 
         film_icon_img_2 = Film.current_film_icon(Film, 2)
         film_icon_2 = CTk.CTkLabel(self.film_frame_2, text="", image=film_icon_img_2)
         film_icon_2.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_2 = CTk.CTkLabel(self.film_frame_2, height=10, justify = 'left', text=Film.current_film_name(Film, 2))
+        film_name_2 = CTk.CTkLabel(self.film_frame_2, height=10, justify='left', text=Film.current_film_name(Film, 2))
         film_name_2.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
         film_description_2 = CTk.CTkLabel(self.film_frame_2, text=Film.current_film_description(Film, 2))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
         buy_ticket_btn_2 = CTk.CTkButton(self.film_frame_2, text='Купить билет', command=lambda: self.buy_ticket(2))
         buy_ticket_btn_2.grid(row=2, column=1, sticky="s")
 
-
         self.film_frame_3 = CTk.CTkFrame(self.current_frame, fg_color="transparent")
-        self.film_frame_3.grid(row=2, column=0, sticky="w", pady=5)
-        #self.film_frame_3.grid_columnconfigure(0, weight=1)
+        self.filmate_frame_3.grid(row=2, column=0, sticky="w", pady=5)
+        # self.film_frame_3.grid_columnconfigure(0, weight=1)
 
         film_icon_img_3 = Film.current_film_icon(Film, 3)
         film_icon_3 = CTk.CTkLabel(self.film_frame_3, text="", image=film_icon_img_3)
         film_icon_3.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_3 = CTk.CTkLabel(self.film_frame_3, height=10, justify = 'left', text=Film.current_film_name(Film, 3))
+        film_name_3 = CTk.CTkLabel(self.film_frame_3, height=10, justify='left', text=Film.current_film_name(Film, 3))
         film_name_3.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
         film_description_2 = CTk.CTkLabel(self.film_frame_3, text=Film.current_film_description(Film, 3))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
         buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', command=lambda: self.buy_ticket(3))
         buy_ticket_btn_3.grid(row=2, column=1, sticky="s")
 
-    def open_cinema_window(self): 
+    def open_cinema_window(self):
 
         self.current_frame.destroy()
 
@@ -296,8 +310,8 @@ class Main_window():
         self.current_frame.grid(row=0, column=1)
 
         cinema_icon_img = CTk.CTkImage(light_image=Image.open('img/icons/cinema_icon.png'),
-                                  dark_image=Image.open('img/icons/cinema_icon.png'),
-                                  size=(256, 256))
+                                       dark_image=Image.open('img/icons/cinema_icon.png'),
+                                       size=(256, 256))
         cinema_icon = CTk.CTkLabel(self.current_frame, text="", image=cinema_icon_img)
         cinema_icon.pack()
         cinema_name = CTk.CTkLabel(self.current_frame, text='Кинотеатр "Художественный фильм"')
@@ -311,8 +325,8 @@ class Main_window():
         self.current_frame.grid(row=0, column=1)
 
         user_icon_img = CTk.CTkImage(light_image=Image.open('img/icons/user_icon.png'),
-                                  dark_image=Image.open('img/icons/user_icon.png'),
-                                  size=(256, 256))
+                                     dark_image=Image.open('img/icons/user_icon.png'),
+                                     size=(256, 256))
         user_icon = CTk.CTkLabel(self.current_frame, text="", image=user_icon_img)
         user_icon.pack()
         user_name = CTk.CTkLabel(self.current_frame, text=User.login)
@@ -321,7 +335,7 @@ class Main_window():
     def change_appearance_mode_event(self, new_appearance_mode):
         CTk.set_appearance_mode(new_appearance_mode)
 
-    def buy_ticket(self, film_id): 
+    def buy_ticket(self, film_id):
         Buy_ticket(film_id)
 
     def logout(self):
@@ -336,25 +350,6 @@ class Main_window():
         if messagebox.askokcancel("Выход", "Вы действительно хотите выйти?"):
             self.window.destroy()
 
-#База данных
-class Data_base():
-    wb_films= load_workbook('./db/films.xlsx')
-    films_sheet = wb_films['Фильмы']
-    auditorium_sheet = wb_films['Залы']
-    schedule_sheet = wb_films['Расписание_фильмов']
-    auditorium_1 = wb_films['Зал_1']
-    auditorium_2 = wb_films['Зал_2']
-    auditorium_3 = wb_films['Зал_3']
-    auditorium_4 = wb_films['Зал_4']
-    auditorium_5 = wb_films['Зал_5']
-
-    wb_users= load_workbook('./db/users.xlsx')
-    users_sheet = wb_users['users']
-
-    def save_data_base(self):
-        self.wb_films.save('./db/films.xlsx')
-        self.wb_users.save('./db/users.xlsx')
- 
 
 class Buy_ticket():
     def __init__(self, film_id):
@@ -366,7 +361,9 @@ class Buy_ticket():
 
     def create_buy_ticket_form(self, film_id):
 
-        film_name = CTk.CTkLabel(self.window, text=f'{Film.current_film_name(Film, film_id)} {Film.current_film_age_limit(Film, film_id)}', **base_padding)
+        film_name = CTk.CTkLabel(self.window,
+                                 text=f'{Film.current_film_name(Film, film_id)} {Film.current_film_age_limit(Film, film_id)}',
+                                 **base_padding)
         film_name.pack()
 
         date_label = CTk.CTkLabel(self.window, text='Дата', **base_padding)
@@ -386,7 +383,8 @@ class Buy_ticket():
         time_label = CTk.CTkLabel(self.window, text='Время', **base_padding)
         time_label.pack()
         time_arr = Movie_schedule().session_time(film_id, auditorium)
-        self.time_menu = CTk.CTkOptionMenu(self.window, values=time_arr, command = self.update_price, dynamic_resizing=True)
+        self.time_menu = CTk.CTkOptionMenu(self.window, values=time_arr, command=self.update_price,
+                                           dynamic_resizing=True)
         self.time_menu.pack()
 
         row_label = CTk.CTkLabel(self.window, text='Ряд', **base_padding)
@@ -407,7 +405,8 @@ class Buy_ticket():
         username_entry = CTk.CTkEntry(self.window)
         username_entry.pack()
 
-        self.price_label = CTk.CTkLabel(self.window, text=f'Цена билета: None\n(оплата при входе в зрительный зал)', **base_padding)
+        self.price_label = CTk.CTkLabel(self.window, text=f'Цена билета: None\n(оплата при входе в зрительный зал)',
+                                        **base_padding)
         self.price_label.pack()
         self.update_price(None)
 
@@ -417,75 +416,32 @@ class Buy_ticket():
     def update_row(self, row_menu):
         current_auditorium = self.time_menu.get()
         line = 1
-        while line <= int(Data_base().auditorium_sheet['E2'].value)+1:
+        while line <= int(Data_base().auditorium_sheet['E2'].value) + 1:
             if str(Data_base().schedule_sheet[f'A{line}'].value) == current_auditorium:
                 max_row = str(Data_base().schedule_sheet[f'C{line}'].value)
                 row_arr = list(map(str, range(1, max_row)))
                 self.row_menu.configure(values=row_arr)
                 break
-            line+=1
+            line += 1
 
     def update_price(self, time_menu):
         current_time = self.time_menu.get()
         line = 1
-        while line <= int(Data_base().schedule_sheet['H2'].value)+1:
+        while line <= int(Data_base().schedule_sheet['H2'].value) + 1:
             if str(Data_base().schedule_sheet[f'F{line}'].value) == current_time:
                 price = str(Data_base().schedule_sheet[f'C{line}'].value)
-                self.price_label.configure(text = f'Цена билета: {price}\n(оплата при входе в зрительный зал)')
+                self.price_label.configure(text=f'Цена билета: {price}\n(оплата при входе в зрительный зал)')
                 break
-            line+=1
+            line += 1
 
-
-#Фильмы
-class Film():
-    def __init__(self):
-
-        self.icon = CTk.CTkImage(light_image=Image.open('img/icons/film_icon.png'),
-                                  dark_image=Image.open('img/icons/film_icon.png'),
-                                  size=(128, 128))
-        self.name = 'Name'
-        self.description = 'Description'
-
-    def current_line(self, id):
-        line = 1
-        while line!=Data_base().films_sheet[f'J2'].value+2:
-            if Data_base().films_sheet[f'A{line}'].value == id: return line
-            line+=1
-
-    def current_film_icon(self, id):
-        icon = CTk.CTkImage(light_image=Image.open(f'img/films/{id}.png'),
-                                  dark_image=Image.open(f'img/films/{id}.png'),
-                                  size=(256, 256))
-        return icon
-
-    def current_film_name(self, id):
-        current_line = self.current_line(self, id)
-        name = Data_base().films_sheet[f'B{current_line}'].value
-        return name
-
-    def current_film_description(self, id):
-        current_line = self.current_line(self, id)
-        description = Data_base().films_sheet[f'C{current_line}'].value
-        return description
-
-    def current_film_duration(self, id):
-        current_line = self.current_line(self, id)
-        duration = Data_base().films_sheet[f'E{current_line}'].value
-        return duration
-
-    def current_film_age_limit(self, id):
-        current_line = self.current_line(self, id)
-        age_limit = f'{Data_base().films_sheet[f"F{current_line}"].value}+'
-        return age_limit
-  
 
 class Movie_schedule():
     def current_lines(self, current_string):
         line = 1
         lines = []
-        while line!=Data_base().schedule_sheet[f'H2'].value+2:
-            if Data_base().schedule_sheet[f'B{line}'].value == current_string : lines.append(line)
-            line+=1
+        while line != Data_base().schedule_sheet[f'H2'].value + 2:
+            if Data_base().schedule_sheet[f'B{line}'].value == current_string: lines.append(line)
+            line += 1
         return lines
 
     def session_date(self, film_id):
@@ -515,21 +471,22 @@ class Movie_schedule():
             return session_time_arr
 
 
-
-        
 if __name__ == '__main__':
-    try: 
+    try:
         Data_base()
-    except: 
+    except:
         messagebox.showerror('Ошибка', 'Ошибка загрузки базы данных')
         exit()
-    try: 
+    try:
         User()
-    except: 
+    except:
         messagebox.showerror('Ошибка', 'Ошибка загрузки данных пользователя')
         exit()
+    '''
     try:
         Login_window()
     except: 
         messagebox.showerror('Ошибка', 'Ошибка загрузки интерфейса Tkinter')
         exit()
+    '''
+    Login_window()
