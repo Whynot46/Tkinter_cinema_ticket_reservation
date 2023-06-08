@@ -9,6 +9,7 @@ from films import *
 from settings import *
 from buy_ticket import *
 from movie_schedule import *
+from open_txt import open_txt_file
 
 
 # Окно авторизации
@@ -120,7 +121,7 @@ class Import_file():
     #сканирование выбранного файла
     def scan_file(self):
         file_name = self.files_menu.get()
-        file = open(file_name, 'r')
+        file = open_txt_file(file_name)
         while True:
             line = file.readline()
             parameter = line.partition(':')[0]
