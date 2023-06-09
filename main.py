@@ -17,7 +17,7 @@ class Login_window():
     def __init__(self):
         self.window = CTk.CTk()
         self.window.title('Авторизация')
-        self.window.geometry('350x430')
+        self.window.geometry('350x510')
         self.window.resizable(False, False)
 
         self.cinema_icon_img = CTk.CTkImage(light_image=Image.open('./img/icons/login_icon.png'),
@@ -30,29 +30,29 @@ class Login_window():
         self.cinema_icon = CTk.CTkLabel(self.window, text="", image=self.cinema_icon_img)
         self.cinema_icon.pack()
 
-        self.authorization_label = CTk.CTkLabel(self.window, text='Авторизация', **header_padding)
+        self.authorization_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=20, weight="bold"), text='Авторизация', **header_padding)
         self.authorization_label.pack()
 
-        self.login_label = CTk.CTkLabel(self.window, text='Логин', **base_padding)
-        self.login_label.pack()
+        self.login_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Логин', **base_padding)
+        self.login_label.pack(**base_padding)
 
         self.login_entry = CTk.CTkEntry(self.window)
-        self.login_entry.pack()
+        self.login_entry.pack(**base_padding)
         self.login_entry.focus()
 
-        self.password_label = CTk.CTkLabel(self.window, text='Пароль', **base_padding)
-        self.password_label.pack()
+        self.password_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Пароль', **base_padding)
+        self.password_label.pack(**base_padding)
 
         self.password_entry = CTk.CTkEntry(self.window)
-        self.password_entry.pack()
+        self.password_entry.pack(**base_padding)
 
-        self.send_btn = CTk.CTkButton(self.window, text='Войти', command=self.login)
+        self.send_btn = CTk.CTkButton(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Войти', command=self.login)
         self.send_btn.pack(**base_padding)
 
-        self.registration_button = CTk.CTkButton(self.window, text='Регистрация', command=self.to_registration)
+        self.registration_button = CTk.CTkButton(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Регистрация', command=self.to_registration)
         self.registration_button.pack(**base_padding)
 
-        self.import_file_btn = CTk.CTkButton(self.window, text='Импортировать текстовый файл', command=lambda: Import_file())
+        self.import_file_btn = CTk.CTkButton(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Импортировать текстовый файл', command=lambda: Import_file())
         self.import_file_btn.pack(**base_padding)
 
         self.window.protocol("WM_DELETE_WINDOW", self.on_exit)
@@ -162,7 +162,7 @@ class Registration_window():
     def __init__(self):
         self.window = CTk.CTkToplevel()
         self.window.title("Регистрация")
-        self.window.geometry("300x630")
+        self.window.geometry("340x770")
         self.window.resizable(False, False)
         self.window.protocol("WM_DELETE_WINDOW", self.on_exit)
         self.code = None
@@ -177,50 +177,50 @@ class Registration_window():
         self.authorization_icon = CTk.CTkLabel(self.window, text="", image=self.authorization_icon_img)
         self.authorization_icon.pack()
 
-        self.authorization_label = CTk.CTkLabel(self.window, text='Регистрация', **header_padding)
+        self.authorization_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=20, weight="bold"), text='Регистрация', **header_padding)
         self.authorization_label.pack()
 
-        self.name_label = CTk.CTkLabel(self.window, text='ФИО', **base_padding)
-        self.name_label.pack()
+        self.name_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='ФИО', **base_padding)
+        self.name_label.pack(**base_padding)
 
         self.name_entry = CTk.CTkEntry(self.window)
         self.name_entry.pack()
         self.name_entry.focus()
 
-        self.login_label = CTk.CTkLabel(self.window, text='Логин', **base_padding)
-        self.login_label.pack()
+        self.login_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Логин', **base_padding)
+        self.login_label.pack(**base_padding)
 
         self.login_entry = CTk.CTkEntry(self.window)
         self.login_entry.pack()
 
-        self.email_label = CTk.CTkLabel(self.window, text='E-mail', **base_padding)
-        self.email_label.pack()
+        self.email_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='E-mail', **base_padding)
+        self.email_label.pack(**base_padding)
 
         self.email_entry = CTk.CTkEntry(self.window)
-        self.email_entry.pack()
+        self.email_entry.pack(**base_padding)
 
-        self.password_label = CTk.CTkLabel(self.window, text='Пароль', **base_padding)
-        self.password_label.pack()
+        self.password_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Пароль', **base_padding)
+        self.password_label.pack(**base_padding)
 
         self.password_entry = CTk.CTkEntry(self.window)
         self.password_entry.pack()
 
-        self.repeat_password_label = CTk.CTkLabel(self.window, text='Повторите пароль', **base_padding)
-        self.repeat_password_label.pack()
+        self.repeat_password_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Повторите пароль', **base_padding)
+        self.repeat_password_label.pack(**base_padding)
 
         self.repeat_password_entry = CTk.CTkEntry(self.window)
-        self.repeat_password_entry.pack()
+        self.repeat_password_entry.pack(**base_padding)
 
-        self.send_btn = CTk.CTkButton(self.window, text='Выслать код подтверждения на email', command=self.generate_and_send_code)
+        self.send_btn = CTk.CTkButton(self.window, font=CTk.CTkFont(size=15, weight="bold"),  text='Выслать код подтверждения на email', command=self.generate_and_send_code)
         self.send_btn.pack(**base_padding)
 
-        self.code_label = CTk.CTkLabel(self.window, text='Код подтверждения', **base_padding)
-        self.code_label.pack()
+        self.code_label = CTk.CTkLabel(self.window, font=CTk.CTkFont(size=15, weight="bold"), text='Код подтверждения', **base_padding)
+        self.code_label.pack(**base_padding)
 
         self.code_entry = CTk.CTkEntry(self.window)
         self.code_entry.pack()
 
-        self.send_btn = CTk.CTkButton(self.window, text='Принять', command=self.confirm)
+        self.send_btn = CTk.CTkButton(self.window, font=CTk.CTkFont(size=20, weight="bold"), text='Принять', command=self.confirm)
         self.send_btn.pack(**base_padding)
 
     #Генерация и отправка кода подтверждения на почту
@@ -287,28 +287,28 @@ class Main_window():
         self.top_bar_frame.grid(row=0, column=0, sticky="nsew")
         self.top_bar_frame.grid_rowconfigure(4, weight=1)
 
-        self.poster_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+        self.poster_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, font=CTk.CTkFont(size=20, weight="bold"),
                                         text='Афиша', fg_color="transparent", text_color=("gray10", "gray90"),
                                         hover_color=("gray70", "gray30"), anchor="w", command=self.open_poster_window)
         self.poster_btn.grid(row=0, column=0, sticky="ew")
 
-        self.cinema_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+        self.cinema_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, font=CTk.CTkFont(size=20, weight="bold"),
                                         text='Кинотеатр', fg_color="transparent", text_color=("gray10", "gray90"),
                                         hover_color=("gray70", "gray30"), anchor="w", command=self.open_cinema_window)
         self.cinema_btn.grid(row=1, column=0, sticky="ew")
 
-        self.account_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10,
+        self.account_btn = CTk.CTkButton(self.top_bar_frame, corner_radius=0, height=100, border_spacing=10, font=CTk.CTkFont(size=20, weight="bold"),
                                          text='Личный кабинет', fg_color="transparent", text_color=("gray10", "gray90"),
                                          hover_color=("gray70", "gray30"), anchor="w", command=self.open_account_window)
         self.account_btn.grid(row=2, column=0, sticky="ew")
 
         if (User.name != 'Guest') and (User.login != 'None'):
-            self.account_btn = CTk.CTkButton(self.top_bar_frame, text='Выйти', command=self.logout)
+            self.account_btn = CTk.CTkButton(self.top_bar_frame, font=CTk.CTkFont(size=20, weight="bold"), text='Выйти', command=self.logout)
             self.account_btn.grid(row=9, column=0, sticky="ew", pady=5)
         else:
-            self.account_btn = CTk.CTkButton(self.top_bar_frame, text='Войти', command=self.logout)
+            self.account_btn = CTk.CTkButton(self.top_bar_frame, font=CTk.CTkFont(size=20, weight="bold"), text='Войти', command=self.logout)
             self.account_btn.grid(row=8, column=0, sticky="ew", pady=5)
-            self.account_btn = CTk.CTkButton(self.top_bar_frame, text='Зарегистрируйтесь', command=self.registration)
+            self.account_btn = CTk.CTkButton(self.top_bar_frame, font=CTk.CTkFont(size=20, weight="bold"), text='Зарегистрируйтесь', command=self.registration)
             self.account_btn.grid(row=9, column=0, sticky="ew", pady=5)
 
         self.appearance_mode_menu = CTk.CTkOptionMenu(self.top_bar_frame, values=['System', 'Dark', 'Light'],
@@ -333,41 +333,39 @@ class Main_window():
 
         film_icon_img_1 = Film.current_film_icon(Film, 4)
         film_icon_1 = CTk.CTkLabel(self.film_frame_1, text="", justify='left', image=film_icon_img_1)
-        film_icon_1.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_1 = CTk.CTkLabel(self.film_frame_1, height=10, justify='left', text=Film.current_film_name(Film, 4))
+        film_icon_1.grid(row=0, column=0, rowspan=4, sticky="w", padx=10, pady=1)
+        film_name_1 = CTk.CTkLabel(self.film_frame_1, height=10, justify='left', text=Film.current_film_name(Film, 4), font=CTk.CTkFont(size=20, weight="bold"))
         film_name_1.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
-        film_description_1 = CTk.CTkLabel(self.film_frame_1, text=Film.current_film_description(Film, 4))
+        film_description_1 = CTk.CTkLabel(self.film_frame_1, justify='left', font=CTk.CTkFont(size=15, weight="bold"), text=Film.current_film_description(Film, 4))
         film_description_1.grid(row=2, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_1 = CTk.CTkButton(self.film_frame_1, text='Купить билет', command=lambda: self.buy_ticket(4))
-        buy_ticket_btn_1.grid(row=3, column=1, sticky="s")
+        buy_ticket_btn_1 = CTk.CTkButton(self.film_frame_1, text='Купить билет', font=CTk.CTkFont(size=15, weight="bold"), command=lambda: self.buy_ticket(4))
+        buy_ticket_btn_1.grid(row=3, column=1, sticky="e")
 
         self.film_frame_2 = CTk.CTkFrame(self.current_frame, fg_color="transparent")
         self.film_frame_2.grid(row=1, column=0, sticky="w", pady=5)
-        # self.film_frame_2.grid_columnconfigure(0, weight=1)
 
         film_icon_img_2 = Film.current_film_icon(Film, 2)
         film_icon_2 = CTk.CTkLabel(self.film_frame_2, text="", image=film_icon_img_2)
-        film_icon_2.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_2 = CTk.CTkLabel(self.film_frame_2, height=10, justify='left', text=Film.current_film_name(Film, 2))
+        film_icon_2.grid(row=0, column=0, rowspan=4, sticky="w", padx=10, pady=1)
+        film_name_2 = CTk.CTkLabel(self.film_frame_2, height=10, justify='left', text=Film.current_film_name(Film, 2), font=CTk.CTkFont(size=20, weight="bold"))
         film_name_2.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
-        film_description_2 = CTk.CTkLabel(self.film_frame_2, text=Film.current_film_description(Film, 2))
+        film_description_2 = CTk.CTkLabel(self.film_frame_2, justify='left', font=CTk.CTkFont(size=15, weight="bold"), text=Film.current_film_description(Film, 2))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_2 = CTk.CTkButton(self.film_frame_2, text='Купить билет', command=lambda: self.buy_ticket(2))
-        buy_ticket_btn_2.grid(row=2, column=1, sticky="s")
+        buy_ticket_btn_2 = CTk.CTkButton(self.film_frame_2, text='Купить билет', font=CTk.CTkFont(size=15, weight="bold"), command=lambda: self.buy_ticket(2))
+        buy_ticket_btn_2.grid(row=2, column=1, sticky="e")
 
         self.film_frame_3 = CTk.CTkFrame(self.current_frame, fg_color="transparent")
         self.film_frame_3.grid(row=2, column=0, sticky="w", pady=5)
-        # self.film_frame_3.grid_columnconfigure(0, weight=1)
 
         film_icon_img_3 = Film.current_film_icon(Film, 3)
         film_icon_3 = CTk.CTkLabel(self.film_frame_3, text="", image=film_icon_img_3)
-        film_icon_3.grid(row=0, column=0, rowspan=4, sticky="w", padx=1, pady=1)
-        film_name_3 = CTk.CTkLabel(self.film_frame_3, height=10, justify='left', text=Film.current_film_name(Film, 3))
+        film_icon_3.grid(row=0, column=0, rowspan=4, sticky="w", padx=10, pady=1)
+        film_name_3 = CTk.CTkLabel(self.film_frame_3, height=10, justify='left', text=Film.current_film_name(Film, 3), font=CTk.CTkFont(size=20, weight="bold"))
         film_name_3.grid(row=0, column=1, padx=1, pady=1, sticky='nw')
-        film_description_2 = CTk.CTkLabel(self.film_frame_3, text=Film.current_film_description(Film, 3))
+        film_description_2 = CTk.CTkLabel(self.film_frame_3, justify='left', font=CTk.CTkFont(size=15, weight="bold"), text=Film.current_film_description(Film, 3))
         film_description_2.grid(row=1, column=1, padx=1, pady=1, sticky='nw')
-        buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', command=lambda: self.buy_ticket(3))
-        buy_ticket_btn_3.grid(row=2, column=1, sticky="s")
+        buy_ticket_btn_3 = CTk.CTkButton(self.film_frame_3, text='Купить билет', font=CTk.CTkFont(size=15, weight="bold"), command=lambda: self.buy_ticket(3))
+        buy_ticket_btn_3.grid(row=2, column=1, sticky="e")
 
     #Открытие вкладки Кинотеатр
     def open_cinema_window(self):
@@ -382,8 +380,10 @@ class Main_window():
                                        size=(256, 256))
         cinema_icon = CTk.CTkLabel(self.current_frame, text="", image=cinema_icon_img)
         cinema_icon.pack()
-        cinema_name = CTk.CTkLabel(self.current_frame, text='Кинотеатр "Художественный фильм"')
+        cinema_name = CTk.CTkLabel(self.current_frame, font=CTk.CTkFont(size=30, weight="bold"), text='Кинотеатр "Художественный фильм"')
         cinema_name.pack()
+        cinema_adress = CTk.CTkLabel(self.current_frame, font=CTk.CTkFont(size=20, weight="bold"), text='Адрес: Астрахань, улица Пушкина, дом 231, 3 этаж')
+        cinema_adress.pack()
 
     #Открытие вкладки Личный кабинет
     def open_account_window(self):
@@ -397,9 +397,11 @@ class Main_window():
                                      dark_image=Image.open('img/icons/user_icon.png'),
                                      size=(256, 256))
         user_icon = CTk.CTkLabel(self.current_frame, text="", image=user_icon_img)
-        user_icon.pack()
-        user_name = CTk.CTkLabel(self.current_frame, text=User.login)
-        user_name.pack()
+        user_icon.pack(**base_padding)
+        user_name = CTk.CTkLabel(self.current_frame, font=CTk.CTkFont(size=30, weight="bold"), text=User.login)
+        user_name.pack(**base_padding)
+        change_password_btn = CTk.CTkButton(self.current_frame, font=CTk.CTkFont(size=20, weight="bold"), text='Сменить пароль', command= lambda: print('Change password'))
+        change_password_btn.pack(**base_padding)
 
     #Смена темы приложения
     def change_appearance_mode_event(self, new_appearance_mode):
