@@ -21,21 +21,24 @@ class Movie_schedule():
         return session_date_arr
 
     #Определение залов показа фильмов
-    def session_auditorium(self, film_id, date):
+    def session_auditorium(self, film_id):
         session_auditorium_arr = []
         lines = self.current_lines(film_id)
         for line in lines:
-            if str(Data_base().schedule_sheet[f'E{line}'].value) == date:
-                if str(Data_base().schedule_sheet[f'A{line}'].value) in session_auditorium_arr: continue
-                session_auditorium_arr.append(str(Data_base().schedule_sheet[f'A{line}'].value))
-            return session_auditorium_arr
+            if str(Data_base().schedule_sheet[f'A{line}'].value) in session_auditorium_arr: continue
+            session_auditorium_arr.append(str(Data_base().schedule_sheet[f'A{line}'].value))
+        return session_auditorium_arr
 
     #Определение времени показа фильмов
-    def session_time(self, film_id, auditorium):
+    def session_time(self, film_id):
         session_time_arr = []
         lines = self.current_lines(film_id)
+        print(lines)
         for line in lines:
-            if str(Data_base().schedule_sheet[f'A{line}'].value) == auditorium:
-                if str(Data_base().schedule_sheet[f'F{line}'].value) in session_time_arr: continue
-                session_time_arr.append(str(Data_base().schedule_sheet[f'F{line}'].value))
-            return session_time_arr
+            if str(Data_base().schedule_sheet[f'F{line}'].value) in session_time_arr: 
+                print(str(Data_base().schedule_sheet[f'F{line}'].value))
+                continue
+            session_time_arr.append(str(Data_base().schedule_sheet[f'F{line}'].value))
+        print(session_time_arr)
+        return session_time_arr
+            

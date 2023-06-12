@@ -433,46 +433,45 @@ class Buy_ticket():
         self.window.title("Бронирование")
         self.window.geometry('350x530')
         self.window.resizable(False, False)
-        self.create_buy_ticket_form(film_id)
+        self.film_id = film_id
+        self.create_buy_ticket_form(self.film_id)
 
     #Формирание формы бронирования билетов
     def create_buy_ticket_form(self, film_id):
 
         film_name = CTk.CTkLabel(self.window,
-                                 text=f'{Film.current_film_name(Film, film_id)} {Film.current_film_age_limit(Film, film_id)}',
+                                 text=f'{Film.current_film_name(Film, self.film_id)} {Film.current_film_age_limit(Film, self.film_id)}',
                                  **base_padding)
         film_name.pack()
 
         date_label = CTk.CTkLabel(self.window, text='Дата', **base_padding)
         date_label.pack()
-        date_arr = Movie_schedule().session_date(film_id)
-        self.date_menu = CTk.CTkOptionMenu(self.window, values=date_arr, dynamic_resizing=True)
+        date_arr = Movie_schedule().session_date(self.film_id)
+        self.date_menu = CTk.CTkOptionMenu(self.window, values=date_arr, command=self.update_all, dynamic_resizing=True)
         self.date_menu.pack()
-        data = self.date_menu.get()
 
         auditorium_label = CTk.CTkLabel(self.window, text='Зал', **base_padding)
         auditorium_label.pack()
-        auditorium_arr = Movie_schedule().session_auditorium(film_id, data)
+        auditorium_arr = Movie_schedule().session_auditorium(self.film_id)
         self.auditorium_menu = CTk.CTkOptionMenu(self.window, values=auditorium_arr, dynamic_resizing=True)
         self.auditorium_menu.pack()
-        auditorium = self.auditorium_menu.get()
 
         time_label = CTk.CTkLabel(self.window, text='Время', **base_padding)
         time_label.pack()
-        time_arr = Movie_schedule().session_time(film_id, auditorium)
+        time_arr = Movie_schedule().session_time(self.film_id)
         self.time_menu = CTk.CTkOptionMenu(self.window, values=time_arr, command=self.update_price,
                                            dynamic_resizing=True)
         self.time_menu.pack()
 
         row_label = CTk.CTkLabel(self.window, text='Ряд', **base_padding)
         row_label.pack()
-        row_arr = list(map(str, range(1, 5)))
+        row_arr = list(map(str, range(1, 6)))
         self.row_menu = CTk.CTkOptionMenu(self.window, values=row_arr, command=self.update_row, dynamic_resizing=True)
         self.row_menu.pack()
 
         place_label = CTk.CTkLabel(self.window, text='Место', **base_padding)
         place_label.pack()
-        place_arr = list(map(str, range(1, 5)))
+        place_arr = list(map(str, range(1, 11)))
         self.place_menu = CTk.CTkOptionMenu(self.window, values=place_arr, dynamic_resizing=True)
         self.place_menu.pack()
         self.update_row(None)
@@ -489,6 +488,10 @@ class Buy_ticket():
 
         buy_btn = CTk.CTkButton(self.window, text='Купить')
         buy_btn.pack()
+
+    def update_all(self, menu):
+        self.window.destroy()
+        Buy_ticket(self.film_id)
 
     def update_row(self, row_menu):
         current_auditorium = self.time_menu.get()
