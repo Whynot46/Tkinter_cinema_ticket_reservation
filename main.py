@@ -3,12 +3,12 @@ from tkinter import messagebox
 from random import randint
 from sys import platform
 import os
-from db import *
+from db.db import *
 from user import *
 from films import *
 from settings import *
 from buy_ticket import *
-from movie_schedule import *
+from db.movie_schedule import *
 from open_txt import open_txt_file
 
 
@@ -228,7 +228,6 @@ class Registration_window():
         self.code = str(randint(100000, 999999))
         letter = f'Вас приветствует кинотеатр Tkinter-cinema!\nВаш код для подтверждения регистрации: {self.code}\nЕсли вы не запрашивали этот код, просто проигнорируйте это сообщение'
         send_to_email(self.email_entry.get(), letter)
-        print(self.code)
 
     #Проверка правильности заполнения формы регистрации
     def confirm(self):

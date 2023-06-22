@@ -1,6 +1,6 @@
 from PIL import Image
 from customtkinter import CTkImage
-from db import *
+from db.db import *
 
 #Фильмы
 class Film():

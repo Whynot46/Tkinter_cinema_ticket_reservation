@@ -1,10 +1,8 @@
 from tkinter import messagebox
-from db import *
+from db.db import *
 
 #Покупка билета
 def buy(username, film_id, data, time, auditorium, row, place):
-
-    print(username, film_id, data, time, auditorium, row, place)
     
     if auditorium=='1':
         auditorium_sheet = Data_base().wb_films['Зал_1']
@@ -80,9 +78,6 @@ def buy(username, film_id, data, time, auditorium, row, place):
     Data_base.save_data_base(Data_base)
 
 def is_place_free(auditorium_sheet, current_line, column_row, column_place, column_data):
-        print(auditorium_sheet[f'{column_row}{current_line}'].value)
-        print(auditorium_sheet[f'{column_place}{current_line}'].value)
-        print(auditorium_sheet[f'{column_data}{current_line}'].value)
         if auditorium_sheet[f'{column_row}{current_line}'].value == None:
             if auditorium_sheet[f'{column_place}{current_line}'].value == None:
                 if auditorium_sheet[f'{column_data}{current_line}'].value == None:

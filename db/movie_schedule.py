@@ -1,4 +1,4 @@
-from db import *
+from db.db import *
 
 
 class Movie_schedule():
@@ -33,12 +33,9 @@ class Movie_schedule():
     def session_time(self, film_id):
         session_time_arr = []
         lines = self.current_lines(film_id)
-        print(lines)
         for line in lines:
             if str(Data_base().schedule_sheet[f'F{line}'].value) in session_time_arr: 
-                print(str(Data_base().schedule_sheet[f'F{line}'].value))
                 continue
             session_time_arr.append(str(Data_base().schedule_sheet[f'F{line}'].value))
-        print(session_time_arr)
         return session_time_arr
             
